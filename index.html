@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>S_Y_S_T_E_M_99</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --moth-orange: #f39c12;
+            --grid: #1a1a1a;
+        }
+
+        /* ZÁKLADNÍ NASTAVENÍ */
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            color: #888;
+            font-family: 'Courier New', monospace;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Na desktopu centrujeme na střed */
+            overflow: hidden;
+        }
+
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* HLAVNÍ OBAL UI */
+        #map-viewport {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* NÁPIS */
+        h1 {
+            font-size: 14px;
+            letter-spacing: 10px;
+            color: var(--moth-orange);
+            padding-top: 5px;
+            margin: 0 0 15px 0;
+            text-transform: uppercase;
+            white-space: nowrap;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* MAPA */
+        .map-blueprint {
+            width: 450px;
+            height: 600px;
+            border: 1.5px solid var(--moth-orange);
+            background-image:
+                linear-gradient(var(--grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 45px 45px;
+            position: relative;
+            background-color: rgba(69, 69, 69, 0.8);
+        }
+
+        .office-shape {
+            position: absolute;
+            border: 2px solid #000;
+        }
+
+
+        .vector-circle {
+            position: absolute;
+            border: 1.5px solid;
+            border-color: rgb(110, 110, 92);
+            border-radius: 50%;
+            /* Tohle udělá z obdélníku kolečko */
+            background: rgba(255, 149, 67, 0.5);
+            box-shadow: 0 0 10px var;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            /* Aby se přes něj dalo klikat na lebku */
+        }
+
+
+        .target-skull {
+            position: absolute;
+            font-size: 28px;
+            color: var(--moth-orange);
+            cursor: pointer;
+            text-shadow: 0 0 15px var(--moth-orange);
+            z-index: 10;
+            top: 15%;
+            left: 57%;
+            transform: translate(-50%, -50%);
+            animation: blink 2s infinite;
+        }
+
+        #info-panel {
+            margin-top: 0px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* Samotný text statusu - bez borderu */
+        #status {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            box-sizing: border-box;
+            width: 0;
+            font-size: 20px;
+            letter-spacing: 2px;
+            animation: typing-status 5s steps(25, end) infinite;
+            vertical-align: middle;
+        }
+
+        /* NOVÝ DESIGN KURZORU: Menší a přesnější */
+        #status::after {
+            content: "";
+            display: inline-block;
+            width: 2px;
+            /* Šířka kurzoru */
+            height: 20px;
+            /* VÝŠKA KURZORU - teď ladí k 12px písmu */
+            background-color: var(--moth-orange);
+            margin-left: 1px;
+            vertical-align: baseline;
+            /* Zarovná kurzor na spodní linku textu */
+            animation: blink-cursor 1.5s step-end infinite;
+        }
+
+
+
+        /* --- ANIMACE --- */
+
+        /* 1. Psaní textu */
+        @keyframes typing-status {
+
+            0%,
+            25% {
+                width: 0;
+            }
+
+            50%,
+            100% {
+                width: 100%;
+            }
+        }
+
+        /* 2. Blikání kurzoru (Sjednocený název na blink-cursor) */
+        @keyframes blink-cursor {
+
+            from,
+            to {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* 3. Pulsace lebky */
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 0.5;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        .success-msg {
+            color: #fff;
+            border: 1px solid var(--moth-orange);
+            padding: 10px 20px;
+            display: none;
+            background: rgba(243, 156, 18, 0.2);
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* --- FINÁLNÍ RESPONSIVNÍ OPRAVA PRO MOBILY --- */
+        @media (max-width: 600px) {
+            body {
+                align-items: flex-start;
+                /* Na mobilu začínáme odshora */
+                padding-top: 30px;
+                /* Mezera od horní hrany mobilu */
+            }
+
+            h1 {
+                letter-spacing: 2px !important;
+                font-size: 14px !important;
+                margin-bottom: 20px !important;
+            }
+
+            #map-viewport {
+                transform: scale(0.7) !important;
+                /* Trochu víc zmenšíme, aby byl prostor */
+                transform-origin: center top !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="canvas"></canvas>
+
+    <div id="map-viewport">
+        <div class="container">
+            <h1>Acherontia_Protocol</h1>
+
+            <div class="map-blueprint">
+                <div class="vector-circle"
+                    style="width: 30px; height: 30px; top: 80px; left: 200px">
+                </div>
+                <div class="vector-circle"
+                    style="width: 50px; height: 40px; top: 200px; left: 400px; background-color: #0f7c31;">
+                </div>
+
+                <div class="vector-circle"
+                    style="width: 50px; height: 40px; top: 250px; left: 400px; background-color: #0f7c31;">
+                </div>
+                <div class="vector-circle"
+                    style="width: 60px; height: 40px; top: 350px; left: 380px; background-color: #477d38;">
+                </div>
+
+                <div class="office-shape"
+                    style="width: 70px; height: 130px; top: 13px; left: 231px;background-color: #605535;">
+                </div>
+                <div class="office-shape"
+                    style="width: 120px; height: 60px; top: 450px; left: 10px;background-color: #5c543f;">
+                </div>
+
+
+                <div class="office-shape"
+                    style="width: 30px; height: 25px; top: 300px; right: 1px;">
+                </div>
+
+                <div class="office-shape" style="width: 446px; height: 20px; top: 540px;"></div>
+                <div class="target-skull" onclick="reveal()">🦋</div>
+            </div>
+
+            <div id="info-panel">
+                <div id="status">LOCATE BIOMETRIC SIGNAL...</div>
+                <div id="msg" class="success-msg">return to the skeleton</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        const particles = [];
+        const mothTypes = ["ʚϊɞ", "Ƹ̵̡Ӝ̵̨̄Ʒ", "†Ƹ̵̡Ӝ̵̨̄Ʒ†", "*•.Ƹ̵̡Ӝ̵̨̄Ʒ.•*", "ꕤ", "⋈"];
+        const glitchBlock = "▒";
+        let vectorMothTimer = 0;
+        let vectorMothPos = { x: 0, y: 0, size: 0 };
+        const MOTH_COLOR = "#f39c12";
+
+        class Moth {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.text = mothTypes[Math.floor(Math.random() * mothTypes.length)];
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random() * 0.5;
+                this.fontSize = 16 + Math.random() * 8;
+            }
+            draw() {
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = "#333";
+                ctx.font = `${this.fontSize}px monospace`;
+                ctx.fillText(this.text, this.x, this.y);
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+        }
+
+        for (let i = 0; i < 35; i++) particles.push(new Moth());
+
+        function drawVectorMoth(x, y, size, alpha) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.translate((Math.random() - 0.5) * 3, 0);
+            ctx.globalAlpha = alpha;
+            ctx.strokeStyle = MOTH_COLOR;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(0, -size / 2); ctx.lineTo(size / 10, -size / 3); ctx.lineTo(0, size / 2); ctx.lineTo(-size / 10, -size / 3); ctx.closePath();
+            ctx.moveTo(size / 15, -size / 4); ctx.arc(0, -size / 4, size / 15, 0, Math.PI * 2);
+            ctx.moveTo(-size / 10, -size / 3); ctx.lineTo(-size, -size / 1.5); ctx.lineTo(-size / 2, size / 4); ctx.lineTo(0, 0);
+            ctx.moveTo(size / 10, -size / 3); ctx.lineTo(size, -size / 1.5); ctx.lineTo(size / 2, size / 4); ctx.lineTo(0, 0);
+            ctx.moveTo(-size / 10, 0); ctx.lineTo(-size / 1.5, size / 3); ctx.lineTo(-size / 4, size / 2); ctx.lineTo(0, size / 4);
+            ctx.moveTo(size / 10, 0); ctx.lineTo(size / 1.5, size / 3); ctx.lineTo(size / 4, size / 2); ctx.lineTo(0, size / 4);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function animate() {
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+
+            if (Math.random() > 0.98) { // 5% šance v každém snímku
+                ctx.globalAlpha = Math.random() * 0.4;
+                ctx.fillStyle = (Math.random() > 0.5) ? MOTH_COLOR : "#fff";
+                // Vykreslí linku přes celou šířku o tloušťce 1px na náhodné výšce
+                ctx.fillRect(0, Math.random() * canvas.height, canvas.width, 1);
+            }
+
+            if (vectorMothTimer <= 0 && Math.random() > 0.996) {
+                vectorMothTimer = 180 + Math.random() * 120;
+                vectorMothPos = { x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: 80 + Math.random() * 70 };
+            }
+            if (vectorMothTimer > 0) {
+                let alpha = (vectorMothTimer < 30) ? vectorMothTimer / 30 * 0.6 : 0.6;
+                ctx.strokeStyle = (Math.random() > 0.9) ? "#fff" : MOTH_COLOR;
+                drawVectorMoth(vectorMothPos.x, vectorMothPos.y, vectorMothPos.size, alpha);
+                vectorMothTimer--;
+            }
+            if (Math.random() > 0.95) {
+                ctx.globalAlpha = 0.8;
+                ctx.fillStyle = (Math.random() > 0.5) ? MOTH_COLOR : "#fff";
+                ctx.font = "30px monospace";
+                ctx.fillText(glitchBlock.repeat(1 + Math.floor(Math.random() * 4)), Math.random() * canvas.width, Math.random() * canvas.height);
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+
+
+        function reveal() {
+            document.getElementById('status').style.display = 'none';
+            document.getElementById('msg').style.display = 'block';
+            const skull = document.querySelector('.target-skull');
+            skull.style.animation = 'none';
+            skull.style.color = '#fff';
+            skull.innerHTML = '💀';
+        }
+    </script>
+</body>
+
+</html>
