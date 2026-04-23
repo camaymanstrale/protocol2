@@ -87,14 +87,54 @@
             border: 2px solid #000;
         }
 
+        /* VEKTOROVÝ KLAVÍR (KŘÍDLO) */
+        .piano-wrapper {
+            position: absolute;
+            width: 80px;
+            /* Celková šířka klavíru */
+            height: 100px;
+            /* Celková délka klavíru */
+            background: transparent !important;
+            border: none !important;
+        }
+
+        .piano-wrapper svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Tělo klavíru (stejné barvy jako office-shape) */
+        .piano-body {
+            fill: rgb(96, 74, 29);
+            stroke: #000000;
+            stroke-width: 2.5;
+        }
+
+        /* Naznačení klaviatury */
+        .piano-keys {
+            fill: rgb(119, 115, 94);
+            stroke: #000;
+            stroke-width: 1.5;
+        }
+
+        /* Vnitřní technické čáry (oranžové nákresy) */
+        .piano-blueprint-lines {
+            fill: none;
+            stroke: var(--moth-orange);
+            stroke-width: 1;
+            stroke-dasharray: 3 3;
+            /* Udělá přerušovanou čáru */
+            opacity: 0.6;
+        }
 
         .vector-circle {
             position: absolute;
             border: 1.5px solid;
-            border-color: rgb(110, 110, 92);
+            border-color: rgb(0, 0, 0);
             border-radius: 50%;
             /* Tohle udělá z obdélníku kolečko */
-            background: rgba(255, 149, 67, 0.5);
+            background: rgb(108, 64, 29);
             box-shadow: 0 0 10px var;
             transform: translate(-50%, -50%);
             pointer-events: none;
@@ -109,8 +149,8 @@
             cursor: pointer;
             text-shadow: 0 0 15px var(--moth-orange);
             z-index: 10;
-            top: 15%;
-            left: 57%;
+            top: 10%;
+            left: 75%;
             transform: translate(-50%, -50%);
             animation: blink 2s infinite;
         }
@@ -241,32 +281,49 @@
 
             <div class="map-blueprint">
                 <div class="vector-circle"
-                    style="width: 30px; height: 30px; top: 80px; left: 200px">
+                    style="width: 25px; height: 25px; top: 80px; left: 280px">
                 </div>
                 <div class="vector-circle"
-                    style="width: 50px; height: 40px; top: 200px; left: 400px; background-color: #0f7c31;">
+                    style="width: 50px; height: 40px; top: 190px; left: 400px; background-color: #0d5210;">
                 </div>
 
                 <div class="vector-circle"
-                    style="width: 50px; height: 40px; top: 250px; left: 400px; background-color: #0f7c31;">
+                    style="width: 50px; height: 40px; top: 235px; left: 400px; background-color: #0a5d11;">
                 </div>
                 <div class="vector-circle"
-                    style="width: 60px; height: 40px; top: 350px; left: 380px; background-color: #477d38;">
+                    style="width: 70px; height: 40px; top: 270px; left: 390px; background-color: #1f8a01;">
+                </div>
+
+                <div class="office-shape piano-wrapper"
+                    style="top: 10px; left: 300px; width: 100px; height: 120px;">
+                    <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <path class="piano-body"
+                            d="M 10,10 L 80,10 C 100,10 95,45 75,55 C 50,65 50,90 10,90 Z" />
+
+                        <rect class="piano-keys" x="10" y="10" width="6" height="80" />
+                        <line class="piano-blueprint-lines" x1="16" y1="10" x2="16" y2="90" />
+
+                        <path class="piano-blueprint-lines"
+                            d="M 19,14 L 78,14 C 95,14 90,43 72,52 C 48,62 48,86 19,86 Z" />
+
+                        <path class="piano-blueprint-lines"
+                            d="M 19,25 L 65,25 C 80,25 75,40 62,48 C 45,58 45,75 19,75" />
+                    </svg>
+                </div>
+                <div class="office-shape"
+                    style="width: 120px; height: 60px; top: 460px; left: 250px;background-color: #5c543f;">
+                </div>
+
+
+                <div class="office-shape"
+                    style="width: 50px; height: 50px; top: 470px; left: 15px; background-color:rgb(158, 158, 158)">
                 </div>
 
                 <div class="office-shape"
-                    style="width: 70px; height: 130px; top: 13px; left: 231px;background-color: #605535;">
-                </div>
+                    style="width: 446px; height: 15px; top: 540px;background-color: #333333;"></div>
                 <div class="office-shape"
-                    style="width: 120px; height: 60px; top: 450px; left: 12px;background-color: #5c543f;">
-                </div>
+                    style="width: 446px; height: 10px; top: 528px;background-color: #333333;"></div>
 
-
-                <div class="office-shape"
-                    style="width: 30px; height: 25px; top: 300px; right: 1px;">
-                </div>
-
-                <div class="office-shape" style="width: 446px; height: 20px; top: 540px;"></div>
                 <div class="target-skull" onclick="reveal()">🦋</div>
             </div>
 
